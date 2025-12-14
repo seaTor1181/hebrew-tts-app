@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Text to Speech - Cloud Edition</title>
+    <link rel="stylesheet" href="styles-cloud.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Hebrew Text to Speech</h1>
+        <div class="badge">Cloud Edition - Premium Voices</div>
+
+        <div class="card">
+            <div class="title-input-group">
+                <label for="titleInput">📝 כותרת הקובץ:</label>
+                <input
+                    type="text"
+                    id="titleInput"
+                    placeholder="שם הקובץ (אופציונלי)"
+                    maxlength="100"
+                />
+            </div>
+
+            <!-- Character Counter Above Textarea -->
+            <div class="char-counter">
+                <div class="char-count-display">
+                    <span class="char-label">בתים (bytes):</span>
+                    <span id="currentChars" class="char-current">0</span>
+                    <span class="char-separator">/</span>
+                    <span class="char-limit">5,000</span>
+                </div>
+                <div class="char-cost-display">
+                    <span class="cost-label-mini">עלות:</span>
+                    <span id="quickCost" class="cost-value-mini">$0.00</span>
+                </div>
+            </div>
+
+            <textarea
+                id="textInput"
+                placeholder="הדבק או הקלד טקסט בעברית כאן..."
+                rows="8"
+            >שלום! זה דוגמה לטקסט עברי. המערכת משתמשת בקולות בינה מלאכותית מתקדמים של גוגל.</textarea>
+
+            <div class="controls">
+                <div class="voice-settings">
+                    <div class="setting-group">
+                        <label for="voiceSelect">🎤 בחר קול:</label>
+                        <select id="voiceSelect">
+                            <option value="">טוען קולות...</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="rateControl">⚡ מהירות:</label>
+                        <input type="range" id="rateControl" min="0.25" max="4.0" step="0.25" value="1.0">
+                        <span id="rateValue" class="value-display">1.0x</span>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="pitchControl">🎵 גובה צליל:</label>
+                        <input type="range" id="pitchControl" min="-20.0" max="20.0" step="1.0" value="0.0">
+                        <span id="pitchValue" class="value-display">0.0</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="playBtn" class="btn btn-primary">
+                        <span class="icon">▶️</span> הפעל
+                    </button>
+                    <button id="stopBtn" class="btn btn-secondary" disabled>
+                        <span class="icon">⏹️</span> עצור
+                    </button>
+                    <button id="downloadBtn" class="btn btn-success">
+                        <span class="icon">⬇️</span> הורד MP3
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cost Calculator -->
+            <div class="cost-calculator">
+                <h3>💰 מחשבון עלות</h3>
+                <div id="costDisplay" class="cost-info">הזן טקסט לחישוב עלות</div>
+            </div>
+
+            <!-- Monthly Usage Tracker -->
+            <div class="usage-tracker">
+                <div class="usage-header">
+                    <button class="reset-usage-btn" onclick="resetUsage()" title="אפס מונה שימוש">🔄</button>
+                    <h3>📊 שימוש חודשי</h3>
+                </div>
+                <div class="usage-info">
+                    <div class="usage-numbers">
+                        <span class="usage-label">השתמשת ב-</span>
+                        <span id="monthlyUsage" class="usage-value">0</span>
+                        <span class="usage-limit">/ 1,000,000 תווים</span>
+                    </div>
+                    <div class="usage-bar-container">
+                        <div id="usageBar" class="usage-bar"></div>
+                    </div>
+                    <div class="usage-percent-container">
+                        <span id="usagePercent" class="usage-percent">0.0%</span>
+                        <span class="usage-note-text">מהמסגרת החינמית</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status" class="status"></div>
+
+            <div id="audioPlayer" style="display: none; margin-top: 20px;">
+                <audio id="audioElement" controls style="width: 100%; border-radius: 10px;"></audio>
+            </div>
+        </div>
+
+        <!-- Collapsible Info Section -->
+        <div class="info">
+            <button class="info-toggle" onclick="toggleInfo()">
+                <span id="toggleIcon">▼</span>
+                <strong>מידע נוסף - יתרונות והוראות שימוש</strong>
+            </button>
+
+            <div id="infoContent" class="info-content">
+                <div class="info-section">
+                    <p><strong>✨ יתרונות המערכת:</strong></p>
+                    <ul>
+                        <li>🎯 קולות עבריים איכותיים של Google Cloud</li>
+                        <li>🔊 טכנולוגיית WaveNet מתקדמת</li>
+                        <li>💾 הורדת MP3 אמינה ב-100%</li>
+                        <li>⚡ מהירות דיבור גמישה (0.25x - 4x)</li>
+                        <li>🎵 שליטה בגובה הצליל</li>
+                        <li>🌐 עובד בכל דפדפן מודרני</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <p><strong>📝 הוראות שימוש:</strong></p>
+                    <ul>
+                        <li>הדבק או הקלד טקסט בעברית</li>
+                        <li>בחר קול עברי (WaveNet = איכות פרמיום)</li>
+                        <li>התאם מהירות וגובה צליל</li>
+                        <li>לחץ "הפעל" לשמיעה</li>
+                        <li>לחץ "הורד MP3" לשמירה</li>
+                    </ul>
+                </div>
+
+                <div class="note">
+                    <strong>📌 הערה:</strong> מערכת זו משתמשת ב-Google Cloud Text-to-Speech API.
+                    נדרש מפתח API (ניתן להשיג בחינם עם 1 מיליון תווים בחודש).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script-cloud.js"></script>
+</body>
+</html>
