@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Text to Speech</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Hebrew Text to Speech</h1>
+
+        <div class="card">
+            <textarea
+                id="textInput"
+                placeholder="הדבק או הקלד טקסט בעברית כאן..."
+                rows="8"
+            ></textarea>
+
+            <div class="controls">
+                <div class="voice-settings">
+                    <label for="voiceSelect">בחר קול:</label>
+                    <select id="voiceSelect"></select>
+
+                    <label for="rateControl">מהירות:</label>
+                    <input type="range" id="rateControl" min="0.5" max="2" step="0.1" value="1">
+                    <span id="rateValue">1.0x</span>
+
+                    <label for="pitchControl">גובה צליל:</label>
+                    <input type="range" id="pitchControl" min="0.5" max="2" step="0.1" value="1">
+                    <span id="pitchValue">1.0</span>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="playBtn" class="btn btn-primary">
+                        <span class="icon">▶️</span> הפעל
+                    </button>
+                    <button id="pauseBtn" class="btn btn-secondary" disabled>
+                        <span class="icon">⏸️</span> השהה
+                    </button>
+                    <button id="stopBtn" class="btn btn-secondary" disabled>
+                        <span class="icon">⏹️</span> עצור
+                    </button>
+                    <button id="downloadBtn" class="btn btn-success">
+                        <span class="icon">⬇️</span> הורד MP3
+                    </button>
+                </div>
+            </div>
+
+            <div id="status" class="status"></div>
+        </div>
+
+        <div class="info">
+            <p><strong>הוראות שימוש:</strong></p>
+            <ul>
+                <li>הדבק או הקלד טקסט בעברית בתיבת הטקסט</li>
+                <li>בחר קול עברי מהרשימה</li>
+                <li>התאם את המהירות וגובה הצליל לפי הצורך</li>
+                <li>לחץ "הפעל" לשמיעת הטקסט</li>
+                <li>לחץ "הורד MP3" לשמירת הקובץ</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
