@@ -1,5 +1,8 @@
 // Hebrew TTS Cloud Edition - Client Side
-const API_URL = 'http://localhost:3000/api';
+// Use relative URL to work in both local and cloud environments
+const API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000/api'
+    : '/api';
 
 let voices = [];
 let currentAudio = null;
