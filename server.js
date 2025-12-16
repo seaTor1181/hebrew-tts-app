@@ -33,8 +33,8 @@ if (process.env.GOOGLE_CREDENTIALS_JSON) {
         keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
     });
     console.log('✅ Using credentials from file:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
-} else {
-    // Option 3: Default local file
+} else if (fs.existsSync('./google-credentials.json')) {
+    // Option 3: Local credentials file (for local development)
     ttsClient = new textToSpeech.TextToSpeechClient({
         keyFilename: './google-credentials.json'
     });
@@ -42,6 +42,12 @@ if (process.env.GOOGLE_CREDENTIALS_JSON) {
         keyFilename: './google-credentials.json'
     });
     console.log('✅ Using credentials from ./google-credentials.json');
+} else {
+    // Option 4: Application Default Credentials (ADC) - for Cloud Run
+    // When running on Google Cloud, this automatically uses the service account
+    ttsClient = new textToSpeech.TextToSpeechClient();
+    visionClient = new vision.ImageAnnotatorClient();
+    console.log('✅ Using Application Default Credentials (Cloud Run service account)');
 }
 
 // Available Hebrew voices
