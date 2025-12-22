@@ -85,8 +85,29 @@ base64 -i google-credentials.json
 
 ### Step 5: Deploy to Cloud Run
 
+**Option A: Cloud-Only + Password Protection (MOST SECURE - RECOMMENDED)**
+
 ```bash
-# Build and deploy in one command
+# Deploy with password protection AND cloud-only mode
+gcloud run deploy hebrew-tts \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars "GOOGLE_CREDENTIALS_JSON=$(cat google-credentials.json | tr -d '\n'),PASSWORD=YourSecurePassword123,CLOUD_ONLY=true"
+```
+
+Replace `YourSecurePassword123` with your own strong password!
+
+**What CLOUD_ONLY does:**
+- ✅ App ONLY runs on Google Cloud Run
+- ✅ Won't work if someone downloads your code and tries to run it locally
+- ✅ Prevents unauthorized copies of your app
+- ✅ Extra security layer
+
+**Option B: Without Password (Public Access)**
+
+```bash
+# Deploy without password - anyone with URL can access
 gcloud run deploy hebrew-tts \
   --source . \
   --region us-central1 \
@@ -98,8 +119,8 @@ gcloud run deploy hebrew-tts \
 - `hebrew-tts` - Name of your service
 - `--source .` - Build from current directory
 - `--region us-central1` - Deploy to US region (change if needed)
-- `--allow-unauthenticated` - Make it public (anyone can access)
-- `--set-env-vars` - Pass credentials as environment variable
+- `--allow-unauthenticated` - Make it accessible via web
+- `--set-env-vars` - Pass credentials and password as environment variables
 
 ### Step 6: Wait for Deployment
 

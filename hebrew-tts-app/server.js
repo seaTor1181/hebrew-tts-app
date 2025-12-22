@@ -5,10 +5,37 @@ const vision = require('@google-cloud/vision');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const basicAuth = require('express-basic-auth');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Cloud-Only Mode: Restrict app to run only on Google Cloud Run
+if (process.env.CLOUD_ONLY === 'true') {
+    // Check if running on Cloud Run (Cloud Run sets K_SERVICE env variable)
+    if (!process.env.K_SERVICE) {
+        console.error('❌ CLOUD_ONLY mode is enabled. This app can only run on Google Cloud Run.');
+        console.error('❌ Exiting...');
+        process.exit(1);
+    }
+    console.log('☁️  Running in CLOUD_ONLY mode - verified on Google Cloud Run');
+}
+
+// Password Protection (Optional - set PASSWORD env variable to enable)
+if (process.env.PASSWORD) {
+    console.log('🔐 Password protection enabled');
+    app.use(basicAuth({
+        users: { 'user': process.env.PASSWORD },
+        challenge: true,
+        realm: 'Hebrew TTS App',
+        unauthorizedResponse: (req) => {
+            return 'Access denied. Please enter the correct password.';
+        }
+    }));
+} else {
+    console.log('⚠️  No password set - app is publicly accessible');
+}
 
 // Middleware
 app.use(cors());
@@ -18,14 +45,21 @@ app.use(express.static('public'));
 // Initialize Google Cloud clients with flexible credential loading
 let ttsClient, visionClient;
 
-if (process.env.GOOGLE_CREDENTIALS_JSON) {
-    // Option 1: Credentials stored directly in environment variable (JSON string)
+if (process.env.GOOGLE_CREDENTIALS_BASE64) {
+    // Option 1: Credentials stored as base64 in environment variable
+    const credentialsJson = Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, 'base64').toString('utf-8');
+    const credentials = JSON.parse(credentialsJson);
+    ttsClient = new textToSpeech.TextToSpeechClient({ credentials });
+    visionClient = new vision.ImageAnnotatorClient({ credentials });
+    console.log('✅ Using credentials from GOOGLE_CREDENTIALS_BASE64 environment variable');
+} else if (process.env.GOOGLE_CREDENTIALS_JSON) {
+    // Option 2: Credentials stored directly in environment variable (JSON string)
     const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
     ttsClient = new textToSpeech.TextToSpeechClient({ credentials });
     visionClient = new vision.ImageAnnotatorClient({ credentials });
     console.log('✅ Using credentials from GOOGLE_CREDENTIALS_JSON environment variable');
 } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    // Option 2: Credentials file path in environment variable
+    // Option 3: Credentials file path in environment variable
     ttsClient = new textToSpeech.TextToSpeechClient({
         keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
     });
@@ -34,7 +68,7 @@ if (process.env.GOOGLE_CREDENTIALS_JSON) {
     });
     console.log('✅ Using credentials from file:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
 } else {
-    // Option 3: Default local file
+    // Option 4: Default local file
     ttsClient = new textToSpeech.TextToSpeechClient({
         keyFilename: './google-credentials.json'
     });
